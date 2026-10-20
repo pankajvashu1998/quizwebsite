@@ -8,11 +8,13 @@ import MockTest from "./users/MockTest";
 import Performance from "./users/Performance";
 import Quizzes from "./quizzes/Quizzes";
 import JoinQuiz from "./quizzes/JoinQuiz";
+import Home from "./pages/Home";
 
 const App = () => {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/" element = {<Home/>}/>
         <Route path="/user/dashboard" element={<UserDashboard />}>
           <Route index element={<Dashboard />} />
           <Route path="learning" element={<MyLearning />} />
