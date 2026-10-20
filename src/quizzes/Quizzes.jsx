@@ -22,7 +22,7 @@ const Quizzes = () => {
           <div className="">
             {/* Left Content */}
             <div className="flex relative flex-col justify-center px-10 pb-10">
-              <div className="mx-auto w-100  ">
+              <div className="mx-auto mx-w-100   flex items-center justify-center ">
                 <DotLottieReact src="/lottie/quiz.json" loop autoplay />
               </div>
 
