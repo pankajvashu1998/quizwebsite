@@ -19,6 +19,8 @@ const JoinQuiz = () => {
 
   const question = playQuiz.questions?.[questionNo];
   const totalQuestions = playQuiz.questions?.length || 0;
+  const [seconds, setSeconds] = useState(Number(playQuiz?.duration + 3));
+  const [questionTimer, setQuestionTimer] = useState(question?.time);
 
   // Countdown timer
   useEffect(() => {
@@ -90,6 +92,7 @@ const JoinQuiz = () => {
         if (nextQuestion < totalQuestions) {
           setSelectedOption(null);
           setQuestionNo(nextQuestion);
+          setQuestionTimer(question.time);
         } else {
           setFinished(true);
           setAnimating(false);
@@ -98,7 +101,7 @@ const JoinQuiz = () => {
     });
   };
 
-  // Seconds ko MM:SS format mein convert karna
+  // Seconds ko MM:SS format mein convert karna =================================================
   const formatTime = (seconds) => {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
@@ -108,12 +111,11 @@ const JoinQuiz = () => {
     ).padStart(2, "0")}`;
   };
 
-  const [seconds, setSeconds] = useState(Number(quiz.duration + 3));
-
   useEffect(() => {
     if (seconds <= 0) {
       setFinished(true);
       setAnimating(false);
+
       return;
     }
 
@@ -124,6 +126,34 @@ const JoinQuiz = () => {
     return () => clearInterval(interval);
   }, [seconds]);
 
+  // question timer indivisual
+
+  const QuestionformatTime = (questionTimer) => {
+    const minutes = Math.floor(questionTimer / 60);
+    const remainingSeconds = questionTimer % 60;
+
+    return `${String(minutes).padStart(2, "0")}:${String(
+      remainingSeconds,
+    ).padStart(2, "0")}`;
+  };
+
+  useEffect(() => {
+    if (timer || finished) return;
+
+    if (questionTimer <= 0) {
+      const nextQuestion = questionNo + 1;
+      setQuestionNo(nextQuestion);
+      setQuestionTimer(question.time);
+      return;
+    }
+
+    const interval = setInterval(() => {
+      setQuestionTimer((prev) => Math.max(0, prev - 1));
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [timer, finished, questionTimer]);
+  //==============================================================================
   // Countdown screen
   if (timer) {
     return (
@@ -170,20 +200,20 @@ const JoinQuiz = () => {
 
   return (
     <div className="min-h-screen w-full bg-[#1D0049] p-4">
-      <div className="relative mx-auto w-full max-w-4xl min-h-[95vh] overflow-hidden rounded-2xl  bg-linear-to-br from-[#21064D] via-[#160A35] to-[#080817] p-6 shadow-[0_0_35px_rgba(139,92,246,0.15)] sm:p-8">
+      <div className="relative mx-auto w-full max-w-4xl min-h-[95vh] overflow-hidden rounded-2xl  bg-linear-to-br from-[#21064D] via-[#160A35] to-[#080817] p-6 shadow-[0_0_35px_rgba(139,92,246,0.15)] ">
         {/* Background Effects */}
         <div className="pointer-events-none absolute -right-16 -top-20 h-48 w-48 rounded-full bg-purple-600/20 blur-3xl" />
         <div className="pointer-events-none absolute -bottom-20 -left-16 h-48 w-48 rounded-full bg-indigo-500/20 blur-3xl" />
 
         {/* Quiz Header */}
-        <div className="relative flex flex-col gap-6 border-b-2 border-purple-500/20 pb-8 sm:flex-row sm:items-center sm:justify-between">
+        <div className="relative flex flex-col gap-6 border-b-2 border-purple-500/20 pb-6 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex-1">
-            <div className="flex justify-between">
-              <span className="inline-flex items-center gap-2 rounded-full border border-fuchsia-400/30 bg-fuchsia-500/10 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.2em] text-fuchsia-300">
-                <span className="h-2 w-2 animate-pulse rounded-full bg-fuchsia-400 shadow-[0_0_10px_#E879F9]" />
+            <div className="flex justify-between ">
+              <span className="inline-flex items-center  gap-2 sm:hidden rounded border-2 border-indigo-400  px-4 bg-amber-300 py-1.5 text-sm font-bold uppercase tracking-[0.2em] text-black">
+                <span className="h-2 w-2 animate-pulse rounded-full bg-blue-400 shadow-[0_0_10px_#E879F9]" />
                 {playQuiz.category}
               </span>
-              <span className="inline-flex items-center gap-2 sm:hidden rounded-full border border-fuchsia-400/30 bg-fuchsia-500/10 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.2em] text-fuchsia-300">
+              <span className="inline-flex items-center  gap-2 sm:hidden rounded border-2 border-indigo-400  px-4 bg-amber-300 py-1.5 text-sm font-bold uppercase tracking-[0.2em] text-black">
                 {formatTime(seconds)} min.
               </span>
             </div>
@@ -192,7 +222,7 @@ const JoinQuiz = () => {
               {playQuiz.title}
             </h1>
 
-            <p className="mt-3 max-w-2xl text-sm leading-7 text-purple-200/70 sm:text-base">
+            <p className="mt-3 max-w-2xl text-sm leading-7 text-purple-200 font-semibold sm:text-base">
               {playQuiz.description}
             </p>
 
@@ -202,9 +232,13 @@ const JoinQuiz = () => {
                 {playQuiz.language}
               </span>
 
-              <span className="inline-flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm font-semibold text-white/90">
+              <span className="inline-flex capitalize items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm font-semibold text-white/90">
                 <span className="text-fuchsia-300">✦</span>
                 {playQuiz.difficulty}
+              </span>
+
+              <span className="inline-flex animate-pulse capitalize items-center gap-2 rounded-lg border border-white/10 bg-red-400 px-3 py-2 text-sm font-semibold text-white/90">
+                {QuestionformatTime(questionTimer)} sec.
               </span>
             </div>
           </div>
@@ -246,18 +280,22 @@ const JoinQuiz = () => {
           </div>
         </div>
 
+        {/* question image */}
+
+        <div className="border-2 border-purple-500/20 bg-white/10 min-h-60 w-full rounded-2xl p-4 mt-5"></div>
+
         {/* Animated Question Area */}
         <div ref={questionRef} className="relative mt-8">
           {question ? (
             <>
-              <h2 className="flex items-start gap-3 text-lg font-bold leading-8 text-yellow-300 sm:text-xl">
-                <span className="shrink-0 rounded-lg border border-purple-400/30 bg-purple-500/20 px-3 py-1 text-white">
+              <h2 className="flex items-start gap-3 pl-1 text-lg font-bold leading-8 text-yellow-300 sm:text-xl">
+                <span className="shrink-0  text-white">
                   Q.{questionNo + 1}
                 </span>
                 <span>{question.question}</span>
               </h2>
 
-              <div className="mt-5 grid grid-cols-1 gap-3">
+              <div className="mt-5 grid grid-cols-1 lg:grid-cols-2 gap-3">
                 {question.options?.map((option, index) => {
                   const isSelected = selectedOption === option.optionId;
 
@@ -267,10 +305,10 @@ const JoinQuiz = () => {
                       type="button"
                       disabled={animating}
                       onClick={() => handleOptionSelect(option)}
-                      className={`flex w-full items-center gap-3 rounded-2xl border-2 p-4 text-left transition-colors duration-200 ${
+                      className={`flex w-full items-center gap-3 rounded-2xl border-2 p-2 text-left transition-colors duration-200 ${
                         isSelected
                           ? "border-fuchsia-400 bg-fuchsia-500/30 shadow-[0_0_20px_rgba(217,70,239,0.2)]"
-                          : "border-purple-500/30 bg-indigo-700/20 hover:border-fuchsia-400/60 hover:bg-indigo-400/20"
+                          : "border-purple-500/30 bg-indigo-400/20 hover:border-fuchsia-400/60 hover:bg-indigo-400/20"
                       } ${animating ? "cursor-wait" : "cursor-pointer"}`}
                     >
                       <span

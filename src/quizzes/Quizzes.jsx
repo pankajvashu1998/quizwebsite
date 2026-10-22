@@ -15,10 +15,10 @@ const Quizzes = () => {
   };
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#1D0049] px-4 py-10 text-white sm:px-6 lg:px-8">
+    <div className="relative min-h-screen overflow-hidden bg-[#1D0049] px-4 py-3 text-white sm:px-6 lg:px-8">
       <div className="relative mx-auto max-w-5xl">
         {/* Main Hero Card */}
-        <div className="overflow-hidden rounded-3xl border-2 border-white/10 bg-indigo-500/20 shadow-2xl shadow-purple-950/30">
+        <div className="overflow-hidden rounded-2xl border-2 border-white/10 bg-indigo-500/20 shadow-2xl shadow-purple-950/30">
           <div className="">
             {/* Left Content */}
             <div className="flex relative flex-col justify-center px-10 pb-10">
@@ -96,11 +96,11 @@ const Quizzes = () => {
             </div>
             <div>
               {quiz.instructions.map((ins, i) => (
-                <div key={i} className="flex items-center gap-2">
+                <div key={i} className="flex justify-start items-center gap-2">
                   <span className="w-6 h-6 flex items-center justify-center border-2 border-purple-500/40 rounded-md">
                     {i + 1}
                   </span>
-                  <p className="py-1.5 font-semibold ">{ins}</p>
+                  <p className="py-1.5 font-semibold text-lg">{ins}</p>
                 </div>
               ))}
             </div>
@@ -122,7 +122,7 @@ const Quizzes = () => {
                       Question {i + 1}
                     </p>
 
-                    <h3 className="mt-2 wrap-break-word text-sm font-semibold leading-7 text-slate-200 sm:text-base">
+                    <h3 className="mt-2 wrap-break-word text-lg font-semibold leading-7 text-slate-200 ">
                       {q.question}
                     </h3>
                   </div>
